@@ -1,16 +1,15 @@
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
-from app.db.session import get_db
-from app.domain.recruitment_sourcing.schemas import RecruitmentSourcingRequest, RecruitmentSourcingResponse
+from fastapi import APIRouter, status
+from pydantic import BaseModel
+from typing import List
+from app.domain.recruitment_sourcing.service import RecruitmentSourcingService
 
-router = APIRouter(prefix="/api/v1/recruitment_sourcing", tags=["AI Recruitment & Talent Sourcing Domain"])
+router = APIRouter(prefix="/api/v1/recruitment_sourcing", tags=["Recruitment Sourcing"])
 
-@router.post("/process", response_model=RecruitmentSourcingResponse, status_code=status.HTTP_201_CREATED)
-def process_domain_request(data: RecruitmentSourcingRequest, db: Session = Depends(get_db)):
-    return RecruitmentSourcingResponse(
-        id="REC-8821",
-        status="COMPLETED",
-        summary=f"Processed {data} for AI Recruitment & Talent Sourcing",
-        confidence_score=0.99,
-        created_at="2026-09-10T16:00:00Z"
-    )
+class ScreeningInput(BaseModel):
+    candidate_name: str
+    skills: List[str]
+    experience_years: float
+
+@router.post("/screen", status_code=status.HTTP_200_OK)
+def screen_candidate(data: ScreeningInput):
+    return RecruitmentSourcingService.screen_candidate(data.candidate_name, data.skills, data.experience_years)
