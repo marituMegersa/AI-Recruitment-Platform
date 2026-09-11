@@ -12,4 +12,4 @@ class RecruitmentSourcingRecord(Base):
     match_score = Column(Float, default=0.0)
     skills_json = Column(JSON, nullable=False)
     screening_status = Column(String, default="SHORTLISTED")
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
