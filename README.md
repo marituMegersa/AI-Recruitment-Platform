@@ -1,46 +1,111 @@
-# Enterprise AI Recruitment & Sourcing Platform 💼🤖
+# Enterprise AI Recruitment Platform
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg?style=flat&logo=react)](https://react.dev)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB.svg?style=flat&logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Autonomous Candidate Resume Parsing, Skill Matching & AI Technical Interview Synthesizer**
+> **Automated Candidate Sourcing, Resume Matching, & Interview Synthesis**
 
----
-
-## 🌟 Key Features
-
-- **Automated Resume Parsing**: Extracts candidate skills, work history, and educational credentials into structured Pydantic v2 JSON.
-- **Skill Match Score Algorithm**: Computes weighted match score against job requirement benchmarks (Python, FastAPI, React, PyTorch).
-- **AI Interview Question Synthesizer**: Generates tailored technical screening questions based on candidate profile gaps.
-- **Recruitment Pipeline Dashboard**: Interactive candidate status Kanban board and evaluation scoring.
+An enterprise talent sourcing engine powered by AI. Performs intelligent resume parsing, skills vector similarity matching via Elasticsearch, automated screening question generation, and structured recruitment pipeline tracking.
 
 ---
 
-## 📂 Monorepo Structure
+## 🏛️ Clean Architecture Overview
 
-```text
-AI-Recruitment-Platform/
-├── apps/
-│   ├── api/                     # Python 3.12 FastAPI Backend
-│   │   ├── app/domain/recruitment_sourcing/
-│   │   │   ├── models.py        # Candidate & Job ORM Tables
-│   │   │   ├── schemas.py       # Pydantic v2 Resume & Match Schemas
-│   │   │   ├── service.py       # Resume Parser & Match Scoring Engine
-│   │   │   └── router.py        # REST API Endpoints
-│   │   └── main.py
-│   └── web/                     # React 18 Frontend App
-├── docker-compose.yml
-└── README.md
+This repository is built following **Clean Layered Architecture** standards:
+
+```
+apps/api/app/
+├── api/          # Thin REST routers & Dependency Injection (deps.py)
+├── schemas/      # Pydantic v2 validation DTOs (Request / Response)
+├── models/       # SQLAlchemy 2.0 Async ORM models & Base declarative metadata
+├── repositories/ # Dedicated async database access queries ONLY
+├── services/     # Pure business logic, domain rules, & AI orchestrators
+├── core/         # Settings (pydantic-settings), Async Database, JWT Security, & Exceptions
+└── utils/        # Reusable helper utilities
 ```
 
 ---
 
-## 🚀 Quick Start
+## ✨ Key Features
+
+- **Candidate Screening Engine**:  Dynamic skill matching & AI fit scoring
+- **Interview Synthesis**:  Automatic generation of role-specific interview questions
+- **Elasticsearch Vector Search**:  Instant semantic lookup of tech skills & experience
+- **Recruitment Frontend**:  Modern React UI for HR management and candidate pipelines
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: Python 3.12, FastAPI 0.110+, Async SQLAlchemy 2.0+, Pydantic v2
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons
+- **Database & Cache**: PostgreSQL (Asyncpg), Redis, Elasticsearch
+- **AI & RAG**: vLLM / Ollama, LangChain, LangGraph State Graphs
+- **DevOps & Testing**: Docker, Docker Compose, Pytest, Pytest-Asyncio
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Prerequisites
+- Docker & Docker Compose
+- Python 3.12+
+- Node.js 20+
+
+### 2. Backend Setup
 ```bash
-# Backend
-cd apps/api && pip install -r requirements.txt && python main.py
+# Navigate to API directory
+cd apps/api
 
-# Frontend
-cd apps/web && npm install && npm run dev
+# Install dependencies
+pip install -r requirements.txt
+
+# Run database migrations & start FastAPI app
+python main.py
+# API running at http://localhost:8000 (Swagger docs at http://localhost:8000/docs)
 ```
+
+### 3. Frontend Setup
+```bash
+# Navigate to Web app directory
+cd apps/web
+
+# Install dependencies & start dev server
+npm install
+npm run dev
+# Web app running at http://localhost:3000
+```
+
+### 4. Running via Docker Compose
+```bash
+docker-compose up --build
+```
+
+---
+
+## 🧪 Testing
+
+Run unit & integration tests using `pytest`:
+```bash
+cd apps/api
+pytest tests/ -v
+```
+
+---
+
+## 📜 API Documentation
+
+Once started, interactive API documentation is available at:
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+**Primary Endpoint Sample**:
+`POST /api/v1/recruitment/screen`
+
+---
+
+## 👤 Author & Maintainer
+
+Maintained with ❤️ by **[marituMegersa](https://github.com/marituMegersa)**.
