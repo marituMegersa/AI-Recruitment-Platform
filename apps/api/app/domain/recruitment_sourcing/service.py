@@ -1,16 +1,19 @@
-from typing import Dict, Any, List
-import uuid
+from app.domain.recruitment_sourcing.engine import RecruitmentMatchingEngine
+from app.domain.recruitment_sourcing.schemas import CandidateScreenRequest, CandidateScreenResponse
 
 class RecruitmentSourcingService:
     @staticmethod
-    def screen_candidate(candidate_name: str, skills: List[str], experience_years: float) -> Dict[str, Any]:
-        required_skills = ["Python", "FastAPI", "React", "PyTorch"]
-        matched = [s for s in skills if s in required_skills]
-        score = (len(matched) / len(required_skills)) * 100.0 + (min(experience_years, 5) * 5)
-        return {
-            "candidate_id": f"CAND-{uuid.uuid4().hex[:8]}",
-            "candidate_name": candidate_name,
-            "match_score_percentage": round(score, 1),
-            "matched_skills": matched,
-            "screening_status": "RECOMMENDED_FOR_INTERVIEW" if score >= 70.0 else "REVIEW_NEEDED"
-        }
+    def screen_candidate(req: CandidateScreenRequest) -> CandidateScreenResponse:
+        res = RecruitmentMatchingEngine.match_candidate(
+            candidate_name=req.candidate_name,
+            skills=req.skills,
+            experience_years=req.experience_years
+        )
+        return CandidateScreenResponse(
+            candidate_id=res["candidate_id"],
+            candidate_name=req.candidate_name,
+            match_score=res["match_score"],
+            matched_skills=res["matched_skills"],
+            screening_status=res["screening_status"],
+            synthesized_questions=res["synthesized_questions"]
+        )
