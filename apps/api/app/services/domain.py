@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 import uuid
+import datetime
 
 from app.models.domain import RecruitmentSourcingRecord
 from app.repositories.domain import RecruitmentSourcingRepository
@@ -11,7 +12,7 @@ class RecruitmentSourcingService:
         self.repo = repo
 
     async def screen_candidate_profile(self, req: CandidateScreenRequest) -> CandidateScreenResponse:
-        required = ["Python", "FastAPI", "React", "PyTorch"]
+        required = ["Python", "FastAPI", "React", "PyTorch", "Docker"]
         matched = [s for s in req.skills if s in required]
         score = min(round((len(matched) / len(required)) * 70 + min(req.experience_years, 10) * 3, 1), 100.0)
         status_val = "RECOMMENDED" if score >= 70.0 else "REVIEW_NEEDED"
@@ -24,7 +25,8 @@ class RecruitmentSourcingService:
             candidate_email=req.candidate_email,
             match_score=score,
             skills_json={"skills": req.skills, "matched": matched},
-            screening_status=status_val
+            screening_status=status_val,
+            created_at=datetime.datetime.utcnow()
         )
         saved = await self.repo.create(db_obj)
 
@@ -34,8 +36,11 @@ class RecruitmentSourcingService:
             match_score=saved.match_score,
             matched_skills=matched,
             screening_status=saved.screening_status,
-            synthesized_questions=["How do you manage FastAPI dependencies?", "Explain async SQLAlchemy contexts."],
-            screened_at=saved.created_at
+            synthesized_questions=[
+                f"Explain how you design FastAPI async dependencies for {req.candidate_name}.",
+                "How do you manage vector search embeddings in Elasticsearch?"
+            ],
+            screened_at=saved.created_at or datetime.datetime.utcnow()
         )
 
     async def list_candidates(self, skip: int = 0, limit: int = 50) -> List[RecruitmentSourcingRecord]:
