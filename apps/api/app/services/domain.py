@@ -45,3 +45,5 @@ class RecruitmentSourcingService:
 
     async def list_candidates(self, skip: int = 0, limit: int = 50) -> List[RecruitmentSourcingRecord]:
         return await self.repo.get_multi(skip=skip, limit=limit)
+
+# Business logic & AI engine orchestrator
