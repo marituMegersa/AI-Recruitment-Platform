@@ -1,38 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from typing import List, Optional
-from app.domain.recruitment_sourcing.schemas import *
-from app.domain.recruitment_sourcing.service import *
+from fastapi import APIRouter
+from app.domain.recruitment_sourcing.schemas import CandidateScreenRequest, CandidateScreenResponse
+from app.domain.recruitment_sourcing.service import RecruitmentSourcingService
 
-router = APIRouter(prefix="/api/v1/recruitment_sourcing", tags=["AI Talent Sourcing & Screening"])
+router = APIRouter(prefix="/api/v1/recruitment_sourcing", tags=["AI Talent Sourcing"])
 
-@router.get("/healthz")
-def health_check():
-    return {"status": "healthy", "service": "Enterprise AI Recruitment & Sourcing Platform", "version": "1.0.0"}
+@router.post("/screen", response_model=CandidateScreenResponse)
+def screen_candidate(req: CandidateScreenRequest):
+    return RecruitmentSourcingService.screen_candidate(req)
 
-@router.get("/", response_model=List[dict])
-def list_records(skip: int = Query(0, ge=0), limit: int = Query(50, le=100)):
-    return [
-        {
-            "id": f"REC-00{i+1}",
-            "status": "ACTIVE",
-            "domain": "recruitment_sourcing",
-            "created_at": "2026-09-11T08:00:00Z"
-        } for i in range(min(limit, 5))
-    ]
-
-@router.get("/{record_id}")
-def get_record_by_id(record_id: str):
-    return {
-        "id": record_id,
-        "status": "ACTIVE",
-        "domain": "recruitment_sourcing",
-        "details": "Production record details retrieved successfully."
-    }
-
-@router.post("/process")
-def process_domain_action(payload: dict):
-    return {
-        "execution_status": "COMPLETED",
-        "transaction_id": "TXN-99482710",
-        "processed_payload": payload
-    }
+@router.get("/benchmark-skills")
+def get_benchmark_skills():
+    return {"benchmark_skills": ["Python", "FastAPI", "React", "PyTorch", "Docker", "PostgreSQL"]}

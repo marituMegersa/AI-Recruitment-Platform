@@ -1,22 +1,18 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
 from datetime import datetime
 
-class RecruitmentSourcingRequest(BaseModel):
+class CandidateScreenRequest(BaseModel):
+    candidate_name: str = Field(..., example="Abebe Bikila")
+    candidate_email: str = Field(..., example="abebe@example.com")
+    skills: List[str] = Field(..., example=["Python", "FastAPI", "React", "Docker"])
+    experience_years: float = Field(..., ge=0, le=50, example=4.5)
 
-    job_title: str
+class CandidateScreenResponse(BaseModel):
+    candidate_id: str
     candidate_name: str
-    candidate_email: str
-    skills: List[str] = []
-    experience_years: float
-
-
-class RecruitmentSourcingResponse(BaseModel):
-    id: str
-    status: str = "COMPLETED"
-    summary: str
-    confidence_score: float = 0.98
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+    match_score: float
+    matched_skills: List[str]
+    screening_status: str
+    synthesized_questions: List[str]
+    screened_at: datetime = Field(default_factory=datetime.utcnow)
