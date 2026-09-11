@@ -1,15 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
-from app.db.session import get_db
-from app.domain.recruitment_sourcing.schemas import CandidateScreenRequest, CandidateScreenResponse
-from app.domain.recruitment_sourcing.service import RecruitmentSourcingService
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.session import get_async_db
+from app.domain.recruitment_sourcing.service import RecruitmentSourcingLangGraphService
 
-router = APIRouter(prefix="/api/v1/recruitment_sourcing", tags=["AI Talent Sourcing"])
+router = APIRouter(prefix="/api/v1/recruitment_sourcing", tags=["Enterprise AI Recruitment & Sourcing Platform"])
 
-@router.post("/screen", response_model=CandidateScreenResponse, status_code=status.HTTP_201_CREATED)
-def screen_candidate(req: CandidateScreenRequest, db: Session = Depends(get_db)):
-    return RecruitmentSourcingService.screen_and_store(db, req)
+@router.get("/healthz")
+async def async_health_check():
+    return {"status": "healthy", "architecture": "Async SQLAlchemy + LangGraph + Redis + Elasticsearch"}
 
-@router.get("/candidates")
-def list_candidates(skip: int = Query(0, ge=0), limit: int = Query(50, le=100), db: Session = Depends(get_db)):
-    return RecruitmentSourcingService.list_candidates(db, skip=skip, limit=limit)
+@router.post("/agentic-eval")
+async def run_agentic_eval(payload: dict, db: AsyncSession = Depends(get_async_db)):
+    return await RecruitmentSourcingLangGraphService.evaluate_async(db, payload)
